@@ -21,7 +21,13 @@ if environment == "dev":
         allow_headers=["*"],
     )
 
+@app.get("/health", status_code=200)
+async def health():
+    return {"status": "success"}
+
+
 app.include_router(chat_router, prefix="/api/chat")
+
 
 
 if __name__ == "__main__":
