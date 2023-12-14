@@ -47,6 +47,7 @@ supabase = create_client(url, key)
 async def add(feedback: Feedback):
     # supabase.table('response').insert({"created_at": str(datetime.now()), "user_query": "Is it working?"}).execute()
     supabase.table('response').insert({"created_at": feedback.created_at, "user_query": feedback.user_query}).execute()
+    return {"status": "success"}
 
 
 
