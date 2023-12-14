@@ -4,11 +4,18 @@ import uvicorn
 from app.api.routers.chat import chat_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import datetime
+from pydantic import BaseModel
+
+from supabase import create_client, Client
 
 app = FastAPI()
 
 environment = os.getenv("ENVIRONMENT", "dev")  # Default to 'development' if not set
 
+class Feedback(BaseModel):
+    user_query: str
+    created_at: str = datetime.datetime.now()
 
 if environment == "dev":
     logger = logging.getLogger("uvicorn")
@@ -27,6 +34,19 @@ async def health():
 
 
 app.include_router(chat_router, prefix="/api/chat")
+
+SUPABASE_DB_URL = os.environ["SUPABASE_DB_URL"]
+SUPABASE_DB_KEY = os.environ["SUPABASE_DB_KEY"]
+
+url = SUPABASE_DB_URL
+key = SUPABASE_DB_KEY
+
+supabase = create_client(url, key)
+
+@app.post("/supabase/add")
+async def add(feedback: Feedback):
+    # supabase.table('response').insert({"created_at": str(datetime.now()), "user_query": "Is it working?"}).execute()
+    supabase.table('response').insert({"created_at": feedback.created_at, "user_query": feedback.user_query}).execute()
 
 
 
