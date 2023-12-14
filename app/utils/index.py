@@ -14,8 +14,10 @@ from llama_index.llms import OpenAI
 STORAGE_DIR = "./storage"  # directory to cache the generated index
 DATA_DIR = "./data"  # directory containing the documents to index
 
+GPT_VERSION = os.environ.get("GPT_VERSION", "gpt-3.5-turbo")
+print(GPT_VERSION)
 service_context = ServiceContext.from_defaults(
-    llm=OpenAI(model="gpt-3.5-turbo")
+    llm=OpenAI(model=GPT_VERSION)
 )
 
 def get_index():
